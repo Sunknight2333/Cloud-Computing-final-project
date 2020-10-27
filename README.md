@@ -1,6 +1,6 @@
 # Cloud-Computing-final-project
-## This is the final project for Cloud Computing 2020
-
+This is the final project for Cloud Computing 2020
+## Overview
 This project consists the process of building a containerized machine learning prediction model and deploy it in a scalable, and elastic platform.
 
 The elastic scale-up performance is tested via Load Test with Locust, this project starts with 1 container or endpoint and verify 2 or more inference endpoints scale
@@ -11,6 +11,7 @@ There's also a demo video showing project scaling up to 1k+ requests served by m
 Below is the overall process of this project, which consists creatig a BigQuery Machine Learning model, containerizing this ML model, making a docker and deploying the docker to Kubernetes. 
 
 
+## Detailed Process
 
 ###### 1. Using standard SQL queries to create a Machine Learning model in Google BigQuery.
 
