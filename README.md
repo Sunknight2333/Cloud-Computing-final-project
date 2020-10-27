@@ -1,5 +1,5 @@
 # Cloud-Computing-final-project
-This is the final project for Cloud Computing 2020
+## This is the final project for Cloud Computing 2020
 
 This project consists the process of building a containerized machine learning prediction model and deploy it in a scalable, and elastic platform.
 
@@ -12,90 +12,93 @@ Below is the overall process of this project, which consists creatig a BigQuery 
 
 
 
-1. Using standard SQL queries to create a Machine Learning model in Google BigQuery.
+###### 1. Using standard SQL queries to create a Machine Learning model in Google BigQuery.
 
-(1) create a dataset 
+- create a dataset 
 
-(2) train and deploy a linear regression model
+- train and deploy a linear regression model
   
   
   
-2. Export the model.
+###### 2. Export the model.
 
-(1) Create a bucket on GCP
+- Create a bucket on GCP
 
-(2) Export the previously trained BigQuery ML model to the bucket. 
-
+- Export the previously trained BigQuery ML model to the bucket. 
+```
 bq extract -m bqml_tutorial.iris_model gs://some/gcs/path/iris_model
+```
 
 
 
+###### 4. Download the model
 
-4. Download the model
-
-(1) create a temporary folder
-
+- create a temporary folder
+```
 mkdir tmp_dir
+```
 
-(2) download the model from bucket to this temporary folder
-
+- download the model from bucket to this temporary folder
+```
 gsutil cp -r gs://<your_bucket_name>/iris_model tmp_dir
 
 gsutil cp -r gs://bigqueryml-293607/iris_model tmp_dir
+```
 
 
 
+###### 5. Properly version the model
 
-5. Properly version the model
-
-(1) create a folder for the desired version (1 in this case)
-
+- create a folder for the desired version (1 in this case)
+```
 mkdir -p serving_dir/iris_model/1
+```
 
-(2) copy the model from temp folder to current folder 
-
+- copy the model from temp folder to current folder 
+```
 cp -r tmp_dir/iris_model/* serving_dir/iris_model/1
+```
 
-(3) delete the temp folder
-
+- delete the temp folder
+```
 rm -r tmp_dir
-
+```
   
-  
-  
-6. Make docker for the model
+###### 6. Make docker for the model
 
-(1) pull the tensorflow/serving from docker hub
-
+- pull the tensorflow/serving from docker hub
+```
 docker pull tensorflow/serving
+```
 
-(2) run tensorflow/serving, naming the container serving_base
-
+- run tensorflow/serving, naming the container serving_base
+```
 docker run -d --name serving_base tensorflow/serving
+```
 
-(3) moving the model into the docker container
-
+- moving the model into the docker container
+```
 docker cp serving_dir/iris_model serving_base:/models/iris_model
-
-(4) change the environment varible ENV MODEL_NAME and create an image called iris_serving
-
+```
+- change the environment varible ENV MODEL_NAME and create an image called iris_serving
+```
 docker commit --change "ENV MODEL_NAME iris_model" serving_base iris_serving
-
-(5) run the docker image to see if the image can react to given instance proporly.
-
+```
+- run the docker image to see if the image can react to given instance proporly.
+```
 docker run -p 8501:8501 -t iris_serving &
 
 curl -d '{"instances": [{"sepal_length":5.0, "sepal_width":2.0, "petal_length":3.5, "petal_width":1.0}]}' -X POST
-
-(6) kill the container
-
+```
+- kill the container
+```
 docker kill <container_id>
 
 docker rm <container_id>
+```
+  
+  
+  
+###### 7. Deploying the container to Kubernetes
 
-  
-  
-  
-7. Deploying the container to Kubernetes
-
-(1)
+-
