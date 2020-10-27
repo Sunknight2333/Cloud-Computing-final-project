@@ -21,7 +21,7 @@ Below is the overall process of this project, which consists creatig a BigQuery 
   
   
   
-###### 2. Export the model.
+###### 2. Export the Model.
 
 - Create a bucket on GCP
 
@@ -32,7 +32,7 @@ bq extract -m bqml_tutorial.iris_model gs://some/gcs/path/iris_model
 
 
 
-###### 4. Download the model
+###### 4. Download the Model
 
 - create a temporary folder
 ```
@@ -48,7 +48,7 @@ gsutil cp -r gs://bigqueryml-293607/iris_model tmp_dir
 
 
 
-###### 5. Properly version the model
+###### 5. Properly Version the Model
 
 - create a folder for the desired version (1 in this case)
 ```
@@ -65,7 +65,7 @@ cp -r tmp_dir/iris_model/* serving_dir/iris_model/1
 rm -r tmp_dir
 ```
   
-###### 6. Make docker for the model
+###### 6. Make Docker For The Model
 
 - pull the tensorflow/serving from docker hub
 ```
@@ -100,6 +100,77 @@ docker rm <container_id>
   
   
   
-###### 7. Deploying the container to Kubernetes
+###### 7. Deploy the Container to Kubernetes
 
--
+  - Push the docker image to Google container registry 
+  ```
+  docker tag <you_image> gcr.io/<your_project_id>/<your_image>:v0.1.0
+  docker push
+  ```
+  - Prepare for uploading 
+  ```
+  gcloud auth login --project <your_project_id>
+  gcloud config set compute/zone us-central1-b
+  ```
+  
+  - Enabled Google Kubernetes Engine API 
+  
+  - Create a Kubernetes cluster with 3 nodes
+  ```
+  gcloud container clusters create --num-nodes 3
+  ```
+  
+  - set the cluster to default
+  ```
+  gcloud config set container/cluster <your_cluster_name>
+  ```
+  - get credential for this cluster
+  ```
+  gcloud container clusters get-credentials <your_cluster_name>
+  ```
+  - 
+  
+###### 8. Load Locust Components
+
+  - Replace [TARGET_HOST] and [PROJECT_ID] as needed
+  ```
+  sed -i -e "s/\[TARGET_HOST\]/$TARGET/g" kubernetes-config/locust-master-controller.yaml
+  sed -i -e "s/\[TARGET_HOST\]/$TARGET/g" kubernetes-config/locust-worker-controller.yaml
+  sed -i -e "s/\[PROJECT_ID\]/$PROJECT/g" kubernetes-config/locust-master-controller.yaml
+  sed -i -e "s/\[PROJECT_ID\]/$PROJECT/g" kubernetes-config/locust-worker-controller.yaml
+  ```
+  
+  - Deploy Locust master
+  ```
+  kubectl apply -f kubernetes-config/locust-master-controller.yaml
+  ```
+  - Deploy the locust-master-service
+  ```
+  kubectl apply -f kubernetes-config/locust-master-service.yaml
+  ```
+  To view the newly created forwarding-rule, execute the following:
+  ```
+  kubectl get svc locust-master
+  ```
+  
+  - Deploy locust-worker-controller
+  ```
+  kubectl apply -f kubernetes-config/locust-worker-controller.yaml
+  ```
+  Kubernetes offers the ability to resize deployments without redeploying them.
+  
+  ```
+  kubectl scale deployment/locust-worker --replicas=some-number
+  ```
+###### 9. Execute Tests
+  
+  - get the external IP address
+  ```
+  EXTERNAL_IP=$(kubectl get svc locust-master -o yaml | grep ip | awk -F": " '{print $NF}')
+  echo http://$EXTERNAL_IP:8089
+  ```
+  
+  - Specify testing parameters
+  - Start swarming
+  
+  
