@@ -32,7 +32,7 @@ bq extract -m bqml_tutorial.iris_model gs://some/gcs/path/iris_model
 
 
 
-#### 4. Download the Model
+#### 3. Download the Model
 
 - create a temporary folder
 ```
@@ -48,7 +48,7 @@ gsutil cp -r gs://bigqueryml-293607/iris_model tmp_dir
 
 
 
-#### 5. Properly Version the Model
+#### 4. Properly Version the Model
 
 - create a folder for the desired version (1 in this case)
 ```
@@ -65,7 +65,7 @@ cp -r tmp_dir/iris_model/* serving_dir/iris_model/1
 rm -r tmp_dir
 ```
   
-#### 6. Make Docker For The Model
+#### 5. Make Docker For The Model
 
 - pull the tensorflow/serving from docker hub
 ```
@@ -100,7 +100,7 @@ docker rm <container_id>
   
   
   
-#### 7. Deploy the Container to Kubernetes
+#### 6. Deploy the Container to Kubernetes
 
   - Push the docker image to Google container registry 
   ```
@@ -130,7 +130,7 @@ docker rm <container_id>
   ```
   - 
   
-#### 8. Load Locust Components
+#### 7. Load Locust Components
 
   - Replace [TARGET_HOST] and [PROJECT_ID] as needed
   ```
@@ -162,7 +162,7 @@ docker rm <container_id>
   ```
   kubectl scale deployment/locust-worker --replicas=some-number
   ```
-#### 9. Execute Tests
+#### 8. Execute Tests
   
   - get the external IP address
   ```
