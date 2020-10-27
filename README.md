@@ -13,7 +13,7 @@ Below is the overall process of this project, which consists creatig a BigQuery 
 
 ## Detailed Process
 
-###### 1. Using standard SQL queries to create a Machine Learning model in Google BigQuery.
+#### 1. Using standard SQL queries to create a Machine Learning model in Google BigQuery. 
 
 - create a dataset 
 
@@ -21,7 +21,7 @@ Below is the overall process of this project, which consists creatig a BigQuery 
   
   
   
-###### 2. Export the Model.
+#### 2. Export the Model.
 
 - Create a bucket on GCP
 
@@ -32,7 +32,7 @@ bq extract -m bqml_tutorial.iris_model gs://some/gcs/path/iris_model
 
 
 
-###### 4. Download the Model
+#### 4. Download the Model
 
 - create a temporary folder
 ```
@@ -48,7 +48,7 @@ gsutil cp -r gs://bigqueryml-293607/iris_model tmp_dir
 
 
 
-###### 5. Properly Version the Model
+#### 5. Properly Version the Model
 
 - create a folder for the desired version (1 in this case)
 ```
@@ -65,7 +65,7 @@ cp -r tmp_dir/iris_model/* serving_dir/iris_model/1
 rm -r tmp_dir
 ```
   
-###### 6. Make Docker For The Model
+#### 6. Make Docker For The Model
 
 - pull the tensorflow/serving from docker hub
 ```
@@ -100,7 +100,7 @@ docker rm <container_id>
   
   
   
-###### 7. Deploy the Container to Kubernetes
+#### 7. Deploy the Container to Kubernetes
 
   - Push the docker image to Google container registry 
   ```
@@ -130,7 +130,7 @@ docker rm <container_id>
   ```
   - 
   
-###### 8. Load Locust Components
+#### 8. Load Locust Components
 
   - Replace [TARGET_HOST] and [PROJECT_ID] as needed
   ```
@@ -162,7 +162,7 @@ docker rm <container_id>
   ```
   kubectl scale deployment/locust-worker --replicas=some-number
   ```
-###### 9. Execute Tests
+#### 9. Execute Tests
   
   - get the external IP address
   ```
